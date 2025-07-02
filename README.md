@@ -1,11 +1,44 @@
 # Trademark Registration System
 
-A full-stack web application for trademark registration and management, providing a streamlined process for searching, filing, and monitoring trademark applications across multiple jurisdictions.
+A full-stack web application for trademark registration and management, providing a streamlined process for searching, filing, and monitoring trademark applications across multiple jurisdictions including Greek National Office (OBI), EUIPO, and WIPO (Madrid System).
+
+## Key Features
+
+### Eligibility & Form Mapping
+- **Greek National Office (OBI)**: Standard national application (Form TM-1)
+- **EUIPO**: CTM/EU mark application (Form MM1), class selection per Nice Classification
+- **WIPO (Madrid System)**: International application (MM2) routed via OBI as Office of Origin
+
+### Search & Clearance
+- Integration with **TMview API** (covers EU, GR, WIPO) for preliminary availability checks
+- "Similarity Report" (descriptive + phonetic) to reduce rejection risk
+- Comprehensive trademark search across multiple jurisdictions
+
+### Document & Evidence Collection
+- Structured intake forms for:
+  - Applicant data (natural/legal person; address; nationality)
+  - Representation details (power of attorney upload)
+  - Mark files (image or word mark; vector/logo support)
+  - Goods & services (by class + sub-class selectors)
+
+### Fee Calculation & Payment
+- Dynamic fee engine:
+  - Greek flat fees per class (OBI schedule)
+  - EUIPO basic fee + €50/class
+  - WIPO basic fee + per-designated-office surcharges
+- Stripe integration for card and bank-transfer payments
+
+### Attorney Review & E-Signature
+- On-screen summary PDF for client approval
+- e-Signature capture (DocuSign or equivalent)
+- Audit trail of changes and timestamps
 
 ## Architecture Overview
 
 ### Frontend
-- **Technology**: Next.js with TypeScript
+- **Technology**: Next.js with React and TypeScript
+- **UI Framework**: Tailwind CSS
+- **Form Handling**: Formik or React Hook Form for validation
 - **Features**:
   - Responsive UI for desktop and mobile
   - User authentication and profile management
@@ -13,15 +46,15 @@ A full-stack web application for trademark registration and management, providin
   - Application submission forms
   - Payment processing with Stripe
   - Dashboard for monitoring application status
-  - Document management
+  - Document management and PDF preview
 
 ### Backend
 - **Technology**: FastAPI with Python
 - **Features**:
   - RESTful API endpoints
-  - Authentication and authorization
-  - Integration with trademark databases (TMview, EUIPO)
-  - Placeholder for WIPO/Madrid Protocol support
+  - JWT authentication and authorization
+  - Integration with trademark databases (TMview, EUIPO, OBI)
+  - WIPO/Madrid Protocol support
   - Document generation and management
   - Payment processing with Stripe
   - Future integration with Memex MCP server for legal templates
@@ -36,23 +69,102 @@ A full-stack web application for trademark registration and management, providin
   - Documents and templates
   - Application status tracking
 
+### Storage
+- PostgreSQL for structured data
+- S3 (or equivalent) for uploaded files and documents
+
+### Security
+- OAuth 2.0 or JWT authentication
+- TLS encryption
+- GDPR-compliant data processing
+- Secure storage of sensitive information
+
 ### Infrastructure
 - **Containerization**: Docker with docker-compose for local development
 - **CI/CD**: GitHub Actions for testing and deployment
-- **Deployment**: Docker containers for easy deployment to any cloud provider
+- **Deployment Options**: 
+  - Vercel (frontend)
+  - DigitalOcean/AWS (backend + DB)
+
+## Key User Journeys
+
+### Search → Select Classes
+- Type mark name or upload logo → instant availability score
+- Select desired classes with real-time fee update
+
+### Application Drafting
+- Auto-populate form fields from user profile
+- Preview PDF at each step; "back" edits
+
+### Checkout & Signature
+- Show detailed fee breakdown
+- Secure payment page + immediate confirmation email
+
+### Filing & Tracking
+- Backend agent submits via API or robotic submission
+- Poll office status (using APIs or headless scraping)
+- Push status updates to user dashboard and email
 
 ## External Integrations
 
 ### Trademark Databases
 - **TMview**: For searching existing trademarks across multiple jurisdictions
 - **EUIPO**: For European Union trademark data
-- **WIPO/Madrid System**: Placeholder for future integration with the international registration system
+- **OBI**: Greek National Office for trademark registration
+- **WIPO/Madrid System**: For international registration system
 
 ### Payment Processing
 - **Stripe**: For secure payment processing and invoice management
 
 ### Legal Document Generation
 - **Memex MCP Server**: Future integration for legal template management and document generation
+- **DocuSign**: For e-signature capabilities
+
+## Project Structure
+
+```
+trademark/
+├── frontend/                # Next.js frontend application
+│   ├── public/              # Static assets
+│   ├── src/                 # Source code
+│   │   ├── app/             # Next.js app directory
+│   │   ├── components/      # React components
+│   │   │   ├── auth/        # Authentication components
+│   │   │   ├── dashboard/   # Dashboard components
+│   │   │   ├── forms/       # Form components
+│   │   │   ├── search/      # Search components
+│   │   │   ├── payment/     # Payment components
+│   │   │   └── shared/      # Shared components
+│   │   ├── hooks/           # Custom React hooks
+│   │   ├── lib/             # Utility functions
+│   │   ├── services/        # API service functions
+│   │   └── types/           # TypeScript type definitions
+│   ├── .env.example         # Example environment variables
+│   └── ...                  # Configuration files
+│
+├── backend/                 # FastAPI backend application
+│   ├── app/                 # Application code
+│   │   ├── api/             # API endpoints
+│   │   ├── core/            # Core functionality
+│   │   ├── db/              # Database
+│   │   ├── models/          # Database models
+│   │   ├── schemas/         # Pydantic schemas
+│   │   ├── services/        # Business logic
+│   │   │   ├── tmview_service.py    # TMview API integration
+│   │   │   ├── euipo_service.py     # EUIPO API integration
+│   │   │   ├── obi_service.py       # Greek OBI integration
+│   │   │   ├── wipo_service.py      # WIPO/Madrid integration
+│   │   │   ├── stripe_service.py    # Payment processing
+│   │   │   └── ...                  # Other services
+│   │   └── main.py          # Application entry point
+│   └── ...                  # Configuration files
+│
+├── database/                # Database migrations
+├── infrastructure/          # Infrastructure configuration
+├── scripts/                 # Utility scripts
+├── docs/                    # Documentation
+└── ...                      # Root configuration files
+```
 
 ## Getting Started
 
@@ -92,4 +204,4 @@ See `.env.example` files in both frontend and backend directories for required e
 - Multi-language support
 
 ## License
-[License information to be added]
+[MIT License](LICENSE)
