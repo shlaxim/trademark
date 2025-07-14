@@ -22,7 +22,7 @@ def read_trademarks(
     if crud.user.is_superuser(current_user):
         trademarks = crud.trademark.get_multi(db, skip=skip, limit=limit)
     else:
-        trademarks = crud.trademark.get_multi_by_owner(
+        trademarks = crud.trademark.get_by_owner(
             db=db, owner_id=current_user.id, skip=skip, limit=limit
         )
     return trademarks

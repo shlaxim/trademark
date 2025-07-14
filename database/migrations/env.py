@@ -9,6 +9,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
+# Import all models to ensure they are available for migration
 from backend.app.db.base import Base
 from backend.app.core.config import settings
 
